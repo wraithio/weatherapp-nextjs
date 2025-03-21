@@ -1,5 +1,5 @@
 function saveToLocalStorage(name:string){
-    let nameArr = getFromLocalStorage();
+    const nameArr = getFromLocalStorage();
 
     if(!nameArr.includes(name))
     {
@@ -10,7 +10,7 @@ function saveToLocalStorage(name:string){
 }
 
 function getFromLocalStorage(){
-    let localStorageData = localStorage.getItem('Cities');
+    const localStorageData = localStorage.getItem('Cities');
     if(localStorageData == null){
         return [];
     }
@@ -19,9 +19,9 @@ function getFromLocalStorage(){
 }
 
 function removeFromLocalStorage(name:string){
-    let localStorageData = getFromLocalStorage();
+    const localStorageData = getFromLocalStorage();
 
-    let nameArr = localStorageData.indexOf(name);
+    const nameArr = localStorageData.indexOf(name);
 
     localStorageData.splice(nameArr, 1);
 

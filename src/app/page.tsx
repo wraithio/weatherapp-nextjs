@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { WeatherData } from "../../interface/interfaces";
 import ForecastComponent from "@/components/ForecastComponent";
 import FavoriteComponent from "@/components/FavoriteComponent";
-import { getFromLocalStorage, saveToLocalStorage } from "@/lib/localstorage";
+import { saveToLocalStorage } from "@/lib/localstorage";
 
 export default function Home() {
   const [currentCity, setCurrentCity] = useState<string>("");
@@ -73,7 +73,7 @@ export default function Home() {
   useEffect(() => {
     function getCurrentLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success, error);
+        navigator.geolocation.getCurrentPosition(success);
       } else {
         console.log("Geolocation is loading...");
       }
@@ -85,9 +85,6 @@ export default function Home() {
       );
       setCurrentCity(city.name);
       // fetchData(city.name)
-    }
-    function error(error: any) {
-      console.log(error.message);
     }
     getCurrentLocation();
 
@@ -110,6 +107,7 @@ export default function Home() {
     saveToLocalStorage(search);
     setVisible(false)
     setRenderFavs(true)
+    alert(`${search} saved to favorites!`)
   };
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -145,16 +143,16 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="flex justify-between w-full max-w-[90vw] px-4 mt-4">
+      <div className="flex sm:justify-between justify-center w-full max-w-[90vw] px-4 mt-4">
         <div className="flex flex-col gap-4 w-[70%]">
           <h2 className="text-5xl">{data.name}</h2>
-          <div className="flex flex-row gap-2">
-            <h1 className="text-8xl">{kelvinToFahrenheit(data.main.temp)}°</h1>
+          <div className="flex sm:flex-row flex-col gap-2">
+            <h1 className="sm:text-8xl text-9xl">{kelvinToFahrenheit(data.main.temp)}°</h1>
             <div className="flex sm:flex-row flex-col sm:place-items-end gap-2 w-full">
               <img
                 src={`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
                 alt="current weather icon"
-                className="w-[50%] m-[-1em]"
+                className="sm:w-[50%] sm:m-[-3em] md:m-0 m-[-1em] w-[50%] "
               />
               <div className="sm:w-full">
                 <h4 className="text-sm">
