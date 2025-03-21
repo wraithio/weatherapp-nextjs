@@ -16,10 +16,8 @@ import { saveToLocalStorage } from "@/lib/localstorage";
 
 export default function Home() {
   const [currentCity, setCurrentCity] = useState<string>("");
-  // const [time, setTime] = useState<string>("");
-  const [currentData, setCurrentData] = useState({});
-  const [array, setArray] = useState<string[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
+  // type any smh
   const [forecastData, setForecastData] = useState<any>({});
   const [search, setSearch] = useState<string>("");
   const [renderFavs,setRenderFavs] = useState<boolean>(false)
@@ -73,7 +71,7 @@ export default function Home() {
   useEffect(() => {
     function getCurrentLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success);
+        navigator.geolocation.getCurrentPosition(success,error);
       } else {
         console.log("Geolocation is loading...");
       }
@@ -83,9 +81,13 @@ export default function Home() {
         position.coords.latitude,
         position.coords.longitude
       );
-      setCurrentCity(city.name);
-      fetchData(city.name)
+
     }
+
+    function error(error: any) {
+      console.log(error.message);
+    }
+
     getCurrentLocation();
 
   }, [navigator.geolocation]);

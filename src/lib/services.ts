@@ -1,14 +1,4 @@
 "use client";
-// navigator.geolocation.getCurrentPosition(success, error);
-
-// function getCurrentLocation() {
-//   if (navigator.geolocation) {
-//     navigator.geolocation.getCurrentPosition(success, error);
-//   } else {
-//     console.log("Geolocation is loading...");
-//   }
-// }
-// navigator.geolocation.getCurrentPosition(success, error);
 const APIKEY = process.env.NEXT_PUBLIC_API_KEY
 
 const now = new Date();

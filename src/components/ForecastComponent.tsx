@@ -1,7 +1,6 @@
 import { getDayOfWeek } from "@/lib/services";
 import React from "react";
 import { WeatherProps } from "../../interface/interfaces";
-import Image from "next/image";
 
 const ForecastComponent = ({ forecast }:WeatherProps) => {
 
