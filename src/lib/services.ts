@@ -1,5 +1,4 @@
 "use client";
-import { APIKEY } from "./environmentAPI";
 // navigator.geolocation.getCurrentPosition(success, error);
 
 // function getCurrentLocation() {
@@ -10,6 +9,7 @@ import { APIKEY } from "./environmentAPI";
 //   }
 // }
 // navigator.geolocation.getCurrentPosition(success, error);
+const APIKEY = process.env.NEXT_PUBLIC_API_KEY
 
 const now = new Date();
 let hours = now.getHours();

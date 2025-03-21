@@ -123,7 +123,7 @@ export default function Home() {
   };
  
   return (
-    <div className="font-[family-name:var(--font-georama-sans)] text-white flex flex-col  justify-center h-screen gap-3 mt-8">
+    <div className="font-[family-name:var(--font-georama-sans)] text-white flex flex-col  justify-center h-screen gap-3 pt-8">
       <div className="flex justify-center">
         <div className="w-fit flex flex-row gap-2">
           <div className="relative">
@@ -150,13 +150,13 @@ export default function Home() {
           <h2 className="text-5xl">{data.name}</h2>
           <div className="flex flex-row gap-2">
             <h1 className="text-8xl">{kelvinToFahrenheit(data.main.temp)}°</h1>
-            <div className="flex place-items-end gap-2 w-full">
+            <div className="flex sm:flex-row flex-col sm:place-items-end gap-2 w-full">
               <img
                 src={`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
                 alt="current weather icon"
                 className="w-[50%] m-[-1em]"
               />
-              <div className="w-full">
+              <div className="sm:w-full">
                 <h4 className="text-sm">
                   High {kelvinToFahrenheit(data.main.temp_max)}° - Low{" "}
                   {kelvinToFahrenheit(data.main.temp_min)}°
