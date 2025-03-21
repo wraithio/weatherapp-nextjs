@@ -84,7 +84,7 @@ export default function Home() {
         position.coords.longitude
       );
       setCurrentCity(city.name);
-      // fetchData(city.name)
+      fetchData(city.name)
     }
     getCurrentLocation();
 
