@@ -1,30 +1,70 @@
 "use client";
-import ForecastComponent from "@/components/ForecastComponent";
-import { findCurrentCity, findCurrentInfo, currentTime } from "../lib/services";
+import {
+  findCitybyLine,
+  findCitybyName,
+  currentTime,
+  currentDate,
+  kelvinToFahrenheit,
+  fiveDayCall,
+  getDayOfWeek,
+} from "../lib/services";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { useAppContext } from "../../context/context";
-
-// interface City {
-//   name: string;
-//   currentTemp: number;
-//   highTemp: number;
-//   lowTemp: number;
-//   icon: string;
-// }
-
-// interface CurrentLoc {
-//   name: string;
-//   time: string;
-//   date: string;
-// }
+import { WeatherData } from "../../interface/interfaces";
+import ForecastComponent from "@/components/ForecastComponent";
 
 export default function Home() {
   const [currentCity, setCurrentCity] = useState<string>("");
-  const { search, setSearch } = useAppContext();
   const [time, setTime] = useState<string>("");
   const [currentData, setCurrentData] = useState({});
-  const [data, setData] = useState({});
+  const [data, setData] = useState<WeatherData>({
+    coord: {
+      lon: 88,
+      lat: 88,
+    },
+    weather: [
+      {
+        id: 88,
+        main: "",
+        description: "",
+        icon: "",
+      },
+    ],
+    base: "",
+    main: {
+      temp: 304.261,
+      feels_like: 88,
+      temp_min: 304.261,
+      temp_max: 304.261,
+      pressure: 88,
+      humidity: 88,
+      sea_level: 88,
+      grnd_level: 88,
+    },
+    visibility: 88,
+    wind: {
+      speed: 88,
+      deg: 88,
+    },
+    clouds: {
+      all: 88,
+    },
+    dt: 88,
+    sys: {
+      type: 88,
+      id: 88,
+      country: "",
+      sunrise: 88,
+      sunset: 88,
+    },
+    timezone: 88,
+    id: 88,
+    name: "",
+    cod: 88,
+  });
+  const [forecastData, setForecastData] = useState<any>({});
+  const [search, setSearch] = useState<string>("");
+  // const { search, setSearch } = useAppContext();
 
   // current location display on Load
   useEffect(() => {
@@ -36,11 +76,20 @@ export default function Home() {
       }
     }
     async function success(position: GeolocationPosition) {
-      const city = await findCurrentCity(
+      const city = await findCitybyLine(
         position.coords.latitude,
         position.coords.longitude
       );
       setCurrentCity(city.name);
+      const cityLats = await findCitybyName(city.name);
+      setData(cityLats);
+      const cityForecast = await fiveDayCall(
+        cityLats.coord.lat,
+        cityLats.coord.lon
+      );
+      console.log(cityForecast.list[0]);
+      setForecastData(cityForecast);
+      
     }
     function error(error: any) {
       console.log(error.message);
@@ -49,53 +98,65 @@ export default function Home() {
     setTime(currentTime);
   }, [navigator.geolocation]);
 
-  const handleSearch = () => {
-    console.log(search)
-  }
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setSearch(newValue);
+  };
 
-  // const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   setSearch(event.target.value);
-  // };
+  const handleSearch = async () => {
+    console.log(search);
+    const cityLats = await findCitybyName(search);
+    setData(cityLats);
+    const cityForecast = await fiveDayCall(
+      cityLats.coord.lat,
+      cityLats.coord.lon
+    );
+    console.log(cityForecast.list[0]);
+    setForecastData(cityForecast);
+  };
 
   return (
     <div className="font-[family-name:var(--font-georama-sans)] text-white flex flex-col  justify-center h-screen gap-3 mt-8">
       <div className="flex justify-center">
         <div className="w-fit flex flex-row gap-2">
-          <Input
-            type="text"
-            id="search"
-            onChange={(event) => setSearch(event.target.value)}
-          />
+          <Input type="text" id="search" onChange={handleInputChange} />
           <div className="flex place-items-center">
             <button onClick={handleSearch}>
               <img
                 src="/search.png"
                 alt="search icon"
-                className="w-6 h-6 hover:cursor-pointer"
+                className="w-7 h-6 hover:cursor-pointer"
               />
             </button>
           </div>
         </div>
       </div>
       <div className="flex justify-between w-full max-w-[90vw] px-4 mt-4">
-        <div className="flex flex-col gap-4">
-          <h2 className="text-5xl">Current City</h2>
+        <div className="flex flex-col gap-4 w-[70%]">
+          <h2 className="text-5xl">{data.name}</h2>
           <div className="flex flex-row gap-2">
-            <h1 className="text-8xl">88</h1>
-            <div className="flex place-items-end gap-2">
+            <h1 className="text-8xl">{kelvinToFahrenheit(data.main.temp)}°</h1>
+            <div className="flex place-items-end gap-2 w-full">
               <img
-                src="#"
+                src={`https://openweathermap.org/img/w/${data.weather[0].icon}.png`}
                 alt="current weather icon"
-                className="h-[50%] w-[50%]"
+                className="w-[50%] m-[-1em]"
               />
-              <h4 className="text-sm">High 88° - Low 88°</h4>
+              <div className="w-full">
+                <h4 className="text-sm">
+                  High {kelvinToFahrenheit(data.main.temp_max)}° - Low{" "}
+                  {kelvinToFahrenheit(data.main.temp_min)}°
+                </h4>
+              </div>
             </div>
           </div>
           <div className="flex flex-row gap-2">
             <h4 className="text-sm font-thin">add to favorites</h4>
-            <i className="bx bxs-star"></i>
+            <div className="hover:cursor-pointer">
+              <img src="/staroutline.png" alt="star icon" className="w-4" />
+            </div>
           </div>
-          <h3 className="text-xl font-extralight">Current Date</h3>
+          <h3 className="text-xl font-extralight">{currentDate}</h3>
         </div>
         <div className="flex flex-col gap-2 justify-center text-center text-xl font-extralight">
           <img src="/whitepin.png" alt="pin icon" className="w-22" />
@@ -104,11 +165,11 @@ export default function Home() {
         </div>
       </div>
       <div className="grid grid-rows-1 grid-cols-5 w-full backdrop-blur-xs h-full">
-        <ForecastComponent />
-        <ForecastComponent />
-        <ForecastComponent />
-        <ForecastComponent />
-        <ForecastComponent />
+        <ForecastComponent forecast={forecastData.list[0]} />
+        <ForecastComponent forecast={forecastData.list[8]} />
+        <ForecastComponent forecast={forecastData.list[16]} />
+        <ForecastComponent forecast={forecastData.list[24]} />
+        <ForecastComponent forecast={forecastData.list[32]} />
       </div>
     </div>
   );
