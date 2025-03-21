@@ -6,17 +6,23 @@ import {
   currentDate,
   kelvinToFahrenheit,
   fiveDayCall,
-  getDayOfWeek,
 } from "../lib/services";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { WeatherData } from "../../interface/interfaces";
 import ForecastComponent from "@/components/ForecastComponent";
+import FavoriteComponent from "@/components/FavoriteComponent";
+import { getFromLocalStorage, saveToLocalStorage } from "@/lib/localstorage";
 
 export default function Home() {
   const [currentCity, setCurrentCity] = useState<string>("");
-  const [time, setTime] = useState<string>("");
+  // const [time, setTime] = useState<string>("");
   const [currentData, setCurrentData] = useState({});
+  const [array, setArray] = useState<string[]>([]);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [forecastData, setForecastData] = useState<any>({});
+  const [search, setSearch] = useState<string>("");
+  const [renderFavs,setRenderFavs] = useState<boolean>(false)
   const [data, setData] = useState<WeatherData>({
     coord: {
       lon: 88,
@@ -62,9 +68,6 @@ export default function Home() {
     name: "",
     cod: 88,
   });
-  const [forecastData, setForecastData] = useState<any>({});
-  const [search, setSearch] = useState<string>("");
-  // const { search, setSearch } = useAppContext();
 
   // current location display on Load
   useEffect(() => {
@@ -81,22 +84,33 @@ export default function Home() {
         position.coords.longitude
       );
       setCurrentCity(city.name);
-      const cityLats = await findCitybyName(city.name);
-      setData(cityLats);
-      const cityForecast = await fiveDayCall(
-        cityLats.coord.lat,
-        cityLats.coord.lon
-      );
-      console.log(cityForecast.list[0]);
-      setForecastData(cityForecast);
-      
+      // fetchData(city.name)
     }
     function error(error: any) {
       console.log(error.message);
     }
     getCurrentLocation();
-    setTime(currentTime);
+
   }, [navigator.geolocation]);
+
+  const fetchData = async (city: string) => {
+    const cityLats = await findCitybyName(city);
+    setData(cityLats);
+    const cityForecast = await fiveDayCall(
+      cityLats.coord.lat,
+      cityLats.coord.lon
+    );
+    setForecastData(cityForecast);
+    console.log(cityForecast);
+    setVisible(false)
+  };
+
+  const saveToFavs = async () => {
+    console.log(search);
+    saveToLocalStorage(search);
+    setVisible(false)
+    setRenderFavs(true)
+  };
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
@@ -105,21 +119,21 @@ export default function Home() {
 
   const handleSearch = async () => {
     console.log(search);
-    const cityLats = await findCitybyName(search);
-    setData(cityLats);
-    const cityForecast = await fiveDayCall(
-      cityLats.coord.lat,
-      cityLats.coord.lon
-    );
-    console.log(cityForecast.list[0]);
-    setForecastData(cityForecast);
+    fetchData(search);
   };
-
+ 
   return (
     <div className="font-[family-name:var(--font-georama-sans)] text-white flex flex-col  justify-center h-screen gap-3 mt-8">
       <div className="flex justify-center">
         <div className="w-fit flex flex-row gap-2">
-          <Input type="text" id="search" onChange={handleInputChange} />
+          <div className="relative">
+            <Input type="text" id="search" onChange={handleInputChange} onFocus={()=> setVisible(true)} onClick={()=>setRenderFavs(false)}/>
+            {renderFavs ? <div></div> : <div className={visible ? "absolute backdrop-blur-xs w-full px-2" : "hidden"}>
+              <h2 className="text-sm font-thin">favorites</h2>
+              <hr></hr>
+              <FavoriteComponent fetchData={fetchData} />
+            </div>}
+          </div>
           <div className="flex place-items-center">
             <button onClick={handleSearch}>
               <img
@@ -138,7 +152,7 @@ export default function Home() {
             <h1 className="text-8xl">{kelvinToFahrenheit(data.main.temp)}°</h1>
             <div className="flex place-items-end gap-2 w-full">
               <img
-                src={`https://openweathermap.org/img/w/${data.weather[0].icon}.png`}
+                src={`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
                 alt="current weather icon"
                 className="w-[50%] m-[-1em]"
               />
@@ -151,10 +165,18 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-row gap-2">
-            <h4 className="text-sm font-thin">add to favorites</h4>
-            <div className="hover:cursor-pointer">
-              <img src="/staroutline.png" alt="star icon" className="w-4" />
-            </div>
+            <h4 className="text-sm font-thin" id="favText">
+              add to favorites
+            </h4>
+            <button className="hover:cursor-pointer" onClick={saveToFavs}>
+              <img
+                id="starIcon"
+                src="/staroutline.png"
+                alt="star icon"
+                className="w-4"
+
+              />
+            </button>
           </div>
           <h3 className="text-xl font-extralight">{currentDate}</h3>
         </div>
@@ -164,13 +186,15 @@ export default function Home() {
           <h3 className="tracking-[.1em]">{currentTime}</h3>
         </div>
       </div>
-      <div className="grid grid-rows-1 grid-cols-5 w-full backdrop-blur-xs h-full">
-        <ForecastComponent forecast={forecastData.list[0]} />
-        <ForecastComponent forecast={forecastData.list[8]} />
-        <ForecastComponent forecast={forecastData.list[16]} />
-        <ForecastComponent forecast={forecastData.list[24]} />
-        <ForecastComponent forecast={forecastData.list[32]} />
-      </div>
+      {forecastData.list && forecastData.list.length > 0 && (
+        <div className="grid grid-rows-1 grid-cols-5 w-full backdrop-blur-xs h-full">
+          <ForecastComponent forecast={forecastData.list[0]} />
+          <ForecastComponent forecast={forecastData.list[8]} />
+          <ForecastComponent forecast={forecastData.list[16]} />
+          <ForecastComponent forecast={forecastData.list[24]} />
+          <ForecastComponent forecast={forecastData.list[32]} />
+        </div>
+      )}
     </div>
   );
 }
