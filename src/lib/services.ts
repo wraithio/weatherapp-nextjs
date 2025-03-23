@@ -1,4 +1,7 @@
 "use client";
+
+import { WeatherForecast } from "../../interface/interfaces";
+
 const APIKEY = process.env.NEXT_PUBLIC_API_KEY
 
 const now = new Date();
@@ -60,7 +63,10 @@ const findCitybyLine = async (lat: number, lon: number) => {
 const fiveDayCall = async(lat:number,lon:number) => {
   const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKEY}&units=imperial`);
   const data = await response.json();
-  return data
+  // console.log(data.list[0])
+  const fiveDayArray:WeatherForecast[] = [data.list[0],data.list[8],data.list[16],data.list[24],data.list[32]]
+  console.log(fiveDayArray)
+  return fiveDayArray
 }
 
 function kelvinToFahrenheit(kelvin: number): number {

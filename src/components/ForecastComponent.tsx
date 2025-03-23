@@ -2,8 +2,8 @@ import { getDayOfWeek } from "@/lib/services";
 import React from "react";
 import { WeatherProps } from "../../interface/interfaces";
 
-const ForecastComponent = ({ forecast }:WeatherProps) => {
-
+const ForecastComponent = ({forecast} :WeatherProps) => {
+// { forecast }: { forecast: WeatherData }) {
   return (
     <div className="flex flex-col gap-3 justify-center text-center  font-extralight my-4 border-x border-l-gray-900">
       <h3>{getDayOfWeek(forecast.dt_txt)}</h3>

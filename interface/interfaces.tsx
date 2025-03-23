@@ -29,6 +29,7 @@ export interface WeatherData {
     all: number;
   };
   dt: number;
+  dt_txt: string;
   sys: {
     type?: number;
     id: number;
@@ -72,7 +73,7 @@ export interface WeatherForecast {
   };
   visibility: number;
   pop: number;
-  rain?: {
+  rain: {
     "3h": number;
   };
   sys: {
@@ -83,8 +84,6 @@ export interface WeatherForecast {
 export interface WeatherProps {
   forecast: WeatherForecast;
 }
-
-
 export interface FavoriteComponentProps {
     fetchData: (city: string) => Promise<void>;
   }
