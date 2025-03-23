@@ -19,7 +19,7 @@ figma [here]( https://www.figma.com/design/j9dQsUj06MrMHp7boAOivd/Weather-App?no
 
 github [here](https://github.com/wraithio/weatherapp-nextjs)
 
-vercel [here](work in progress)
+vercel [here](https://weatherapp-nextjs-mu.vercel.app/)
 
 Peer Review: Chris Wells-Hott
 Your Website Works Good. Just Need the vercel and Responiveness. Other than that greate Work.

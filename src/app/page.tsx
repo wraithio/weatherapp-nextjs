@@ -161,7 +161,7 @@ export default function Home() {
   };
 
   return (
-    <div className="font-[family-name:var(--font-georama-sans)] text-white flex flex-col  justify-center h-screen gap-3 pt-8">
+    <div className="font-[family-name:var(--font-georama-sans)] text-white flex flex-col sm:backdrop-blur-none backdrop-blur-xs justify-center h-screen gap-3 pt-8">
       <div className="flex justify-center">
         <div className="w-fit flex flex-row gap-2">
           <div className="relative">
