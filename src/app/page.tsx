@@ -29,12 +29,12 @@ export default function Home() {
     weather: [
       {
         id: 88,
-        main: "",
-        description: "",
-        icon: "",
+        main: "loading...",
+        description: "loading...",
+        icon: "loading...",
       },
     ],
-    base: "",
+    base: "loading...",
     main: {
       temp: 304.261,
       feels_like: 88,
@@ -54,7 +54,7 @@ export default function Home() {
       all: 88,
     },
     dt: 88,
-    dt_txt: "string",
+    dt_txt: "loading...",
     sys: {
       type: 88,
       id: 88,
@@ -64,7 +64,7 @@ export default function Home() {
     },
     timezone: 88,
     id: 88,
-    name: "",
+    name: "loading...",
     cod: 88,
   });
  
